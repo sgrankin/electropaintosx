@@ -332,15 +332,16 @@ public:
 			[glview setWantsBestResolutionOpenGLSurface: YES];
 		}
 		
-		saver = new Saver();
-		
-		[[glview openGLContext] makeCurrentContext];
-		saver->initGL();
 	}
 	return self;
 }
 
 - (void)startAnimation {
+	saver = new Saver();
+	
+	[[glview openGLContext] makeCurrentContext];
+	saver->initGL();
+	
 	if (![glview isDescendantOf:self]) {
 		[self addSubview:glview];
 	}
@@ -349,6 +350,9 @@ public:
 
 - (void)stopAnimation {
 	[super stopAnimation];
+	[glview removeFromSuperview];
+	delete saver;
+	saver = nullptr;
 }
 
 - (void)drawRect:(NSRect)rect {
@@ -356,6 +360,7 @@ public:
 }
 
 - (void)animateOneFrame {
+	[super animateOneFrame];
 	saver->animateOneFrame();
 	[[glview openGLContext] makeCurrentContext];
 	saver->display();
@@ -373,9 +378,10 @@ public:
 }
 
 - (void)dealloc {
-	[glview removeFromSuperview];
-	delete saver;
-	saver = nullptr;
+	if (saver) {
+		delete saver;
+		saver = nullptr;
+	}
 	[super dealloc];
 }
 
