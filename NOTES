@@ -1,0 +1,4 @@
+## Sonoma:
+
+After preview, screen saver continues running inside legacyScreenLaver (Wallpaper) process.
+It's not clear how it even got there. (I think it's the process rendering the Aerial wallpapers.)
