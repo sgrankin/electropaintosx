@@ -323,25 +323,20 @@ public:
 		NSOpenGLPixelFormat *format = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attr] autorelease];
 		glview = [[NSOpenGLView alloc] initWithFrame: NSZeroRect
 						 pixelFormat: format];
-		if (glview)
-		{
-			/* enable OpenGL hi-res display support
-			 https://developer.apple.com/library/archive/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/CapturingScreenContents/CapturingScreenContents.html#//apple_ref/doc/uid/TP40012302-CH10-SW35
-			 */
-			
-			[glview setWantsBestResolutionOpenGLSurface: YES];
-		}
+		/* enable OpenGL hi-res display support
+		 https://developer.apple.com/library/archive/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/CapturingScreenContents/CapturingScreenContents.html#//apple_ref/doc/uid/TP40012302-CH10-SW35
+		 */
 		
+		[glview setWantsBestResolutionOpenGLSurface: YES];
+		saver = new Saver();
+		
+		[[glview openGLContext] makeCurrentContext];
+		saver->initGL();
 	}
 	return self;
 }
 
 - (void)startAnimation {
-	saver = new Saver();
-	
-	[[glview openGLContext] makeCurrentContext];
-	saver->initGL();
-	
 	if (![glview isDescendantOf:self]) {
 		[self addSubview:glview];
 	}
@@ -351,8 +346,6 @@ public:
 - (void)stopAnimation {
 	[super stopAnimation];
 	[glview removeFromSuperview];
-	delete saver;
-	saver = nullptr;
 }
 
 - (void)drawRect:(NSRect)rect {
