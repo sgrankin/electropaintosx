@@ -48,21 +48,18 @@
 
 
 
-struct color_type {
+struct Color {
 	CGFloat red;
 	CGFloat green;
 	CGFloat blue;
 	
-	color_type(void) : red(1), green(1), blue(1)
-	{ };
-	color_type(CGFloat r, CGFloat g, CGFloat b) : red(r), green(g), blue(b)
-	{ };
-	color_type(const color_type & c) : red(c.red), green(c.green), blue(c.blue)
-	{ };
+	Color(void) : red(1), green(1), blue(1) { };
+	Color(CGFloat r, CGFloat g, CGFloat b) : red(r), green(g), blue(b) { };
+	Color(const Color & c) : red(c.red), green(c.green), blue(c.blue) { };
 };
 
 
-struct wing_type
+struct Wing
 {
 	CGFloat radius;		// all angles in degrees, per OpenGL
 	CGFloat angle;
@@ -71,18 +68,18 @@ struct wing_type
 	CGFloat roll;
 	CGFloat pitch;
 	CGFloat yaw;
-	color_type color;
-	color_type edge_color;
+	Color color;
+	Color edge_color;
 	CGFloat alpha;
 	
-	wing_type(void) : radius(10), angle(0), delta_angle(15), z_delta(0.5),
+	Wing(void) : radius(10), angle(0), delta_angle(15), z_delta(0.5),
 	roll(0), pitch(0), yaw(0),
 	color(), edge_color(), alpha(1)
 	{ }
-	wing_type(CGFloat _rad, CGFloat _ang, CGFloat _dang, CGFloat _dz,
-		  CGFloat _roll, CGFloat _pitch, CGFloat _yaw,
-		  const color_type & _c, const color_type & _ec = color_type(),
-		  CGFloat _a = 1) : radius(_rad), angle(_ang), delta_angle(_dang), z_delta(_dz),
+	Wing(CGFloat _rad, CGFloat _ang, CGFloat _dang, CGFloat _dz,
+	     CGFloat _roll, CGFloat _pitch, CGFloat _yaw,
+	     const Color & _c, const Color & _ec = Color(),
+	     CGFloat _a = 1) : radius(_rad), angle(_ang), delta_angle(_dang), z_delta(_dz),
 	roll(_roll), pitch(_pitch), yaw(_yaw),
 	color(_c), edge_color(_ec),
 	alpha(_a)
@@ -90,7 +87,7 @@ struct wing_type
 };
 
 
-struct random_generator_type
+struct RandomGenerator
 {
 	CGFloat min_value;
 	CGFloat max_value;
@@ -100,11 +97,11 @@ struct random_generator_type
 	CGFloat max_speed;
 	NSUInteger stability;
 	
-	random_generator_type(CGFloat min, CGFloat max = 1.0,
-			      NSUInteger stab = 50,
-			      bool wr = false,
-			      CGFloat msp = 0.02,
-			      CGFloat macc = 0.005) : min_value(min), max_value(max),
+	RandomGenerator(CGFloat min, CGFloat max = 1.0,
+			NSUInteger stab = 50,
+			bool wr = false,
+			CGFloat msp = 0.02,
+			CGFloat macc = 0.005) : min_value(min), max_value(max),
 	wrap(wr),
 	max_acceleration(macc), max_speed(msp), stability(stab),
 	value(0), delta(0), count(INT_MAX - 1),
@@ -152,18 +149,18 @@ protected:
 
 class Saver {
 	GLuint wing_dl;
-	std::list<wing_type> wings;
+	std::list<Wing> wings;
 	
-	random_generator_type red_movement{0.0, 1.0, 95};
-	random_generator_type green_movement{0.0, 1.0, 40};
-	random_generator_type blue_movement{0.0, 1.0, 70};
-	random_generator_type roll_change{0, 360, 80, true, 0.5, 0.125};
-	random_generator_type pitch_change{0, 360, 40, true, 1.0, 0.125};
-	random_generator_type yaw_change{0, 360, 50, true, 0.75, 0.125};
-	random_generator_type radius_change{-15, 15, 150, false, 0.05, 0.005};
-	random_generator_type angle_change{0, 360, 120, true, 1, 0.025};
-	random_generator_type delta_angle_change{0, 360, 80, true, 0.1, 0.01};
-	random_generator_type z_delta_change{0.4, 0.7, 200, false, 0.005, 0.0005};
+	RandomGenerator red_movement{0.0, 1.0, 95};
+	RandomGenerator green_movement{0.0, 1.0, 40};
+	RandomGenerator blue_movement{0.0, 1.0, 70};
+	RandomGenerator roll_change{0, 360, 80, true, 0.5, 0.125};
+	RandomGenerator pitch_change{0, 360, 40, true, 1.0, 0.125};
+	RandomGenerator yaw_change{0, 360, 50, true, 0.75, 0.125};
+	RandomGenerator radius_change{-15, 15, 150, false, 0.05, 0.005};
+	RandomGenerator angle_change{0, 360, 120, true, 1, 0.025};
+	RandomGenerator delta_angle_change{0, 360, 80, true, 0.1, 0.01};
+	RandomGenerator z_delta_change{0.4, 0.7, 200, false, 0.005, 0.0005};
 	
 public:
 	void initGL() {
@@ -199,16 +196,16 @@ public:
 		glEnd();
 		glEndList();
 		
-		wing_type newwing(radius_change(),
-				  angle_change(),
-				  delta_angle_change(),
-				  z_delta_change(),
-				  roll_change(),
-				  pitch_change(),
-				  yaw_change(),
-				  color_type(red_movement(),
-					     green_movement(),
-					     blue_movement()));
+		Wing newwing(radius_change(),
+			     angle_change(),
+			     delta_angle_change(),
+			     z_delta_change(),
+			     roll_change(),
+			     pitch_change(),
+			     yaw_change(),
+			     Color(red_movement(),
+				   green_movement(),
+				   blue_movement()));
 		wings.resize(40, newwing);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -221,15 +218,15 @@ public:
 			  0, 0, 13,
 			  0, 0, 1);
 		
-		std::list<wing_type>::const_iterator i(wings.begin());
-		std::list<wing_type>::const_iterator end(wings.end());
+		std::list<Wing>::const_iterator i(wings.begin());
+		std::list<Wing>::const_iterator end(wings.end());
 		unsigned int count(0);
 #if defined(GL_VERSION_1_1)
 		glEnable(GL_POLYGON_OFFSET_LINE);
 #endif
 		glPushMatrix();
 		while (i != end) {
-			wing_type wing(*i++);
+			Wing wing(*i++);
 			
 			glTranslatef(0, 0, wing.z_delta);
 			glPushMatrix();
@@ -283,16 +280,16 @@ public:
 	
 	void animateOneFrame() {
 		wings.pop_back();
-		wings.push_front(wing_type(radius_change(),
-					   angle_change(),
-					   delta_angle_change(),
-					   z_delta_change(),
-					   roll_change(),
-					   pitch_change(),
-					   yaw_change(),
-					   color_type(red_movement(),
-						      green_movement(),
-						      blue_movement())));
+		wings.push_front(Wing(radius_change(),
+				      angle_change(),
+				      delta_angle_change(),
+				      z_delta_change(),
+				      roll_change(),
+				      pitch_change(),
+				      yaw_change(),
+				      Color(red_movement(),
+					    green_movement(),
+					    blue_movement())));
 	}
 };
 
@@ -323,9 +320,7 @@ public:
 			(NSOpenGLPixelFormatAttribute) 0,
 		};
 		
-		NSOpenGLPixelFormat *format =
-		[[[NSOpenGLPixelFormat alloc] initWithAttributes:attr]
-		 autorelease];
+		NSOpenGLPixelFormat *format = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attr] autorelease];
 		glview = [[NSOpenGLView alloc] initWithFrame: NSZeroRect
 						 pixelFormat: format];
 		if (glview)
@@ -339,7 +334,8 @@ public:
 		
 		saver = new Saver();
 		
-		[self initGL];
+		[[glview openGLContext] makeCurrentContext];
+		saver->initGL();
 	}
 	return self;
 }
@@ -361,20 +357,18 @@ public:
 
 - (void)animateOneFrame {
 	saver->animateOneFrame();
-	[self display];
+	[[glview openGLContext] makeCurrentContext];
+	saver->display();
 }
 
-- (BOOL)hasConfigureSheet {
-	return NO;
-}
-
-- (NSWindow*)configureSheet {
-	return nil;
-}
+- (BOOL)hasConfigureSheet { return NO; }
+- (NSWindow*)configureSheet { return nil; }
 
 - (void)setFrameSize:(NSSize)newSize {
 	[glview setFrameSize:newSize];
-	[self reshape:newSize];
+	[[glview openGLContext] makeCurrentContext];
+	saver->reshape(newSize);
+	[[glview openGLContext] update];
 	[super setFrameSize:newSize];
 }
 
@@ -383,23 +377,6 @@ public:
 	delete saver;
 	saver = nullptr;
 	[super dealloc];
-}
-
-
-- (void)initGL {
-	[[glview openGLContext] makeCurrentContext];
-	saver->initGL();
-}
-
-- (void)display {
-	[[glview openGLContext] makeCurrentContext];
-	saver->display();
-}
-
-- (void)reshape:(NSSize)size {
-	[[glview openGLContext] makeCurrentContext];
-	saver->reshape(size);
-	[[glview openGLContext] update];
 }
 
 @end

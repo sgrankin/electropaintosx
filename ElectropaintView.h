@@ -32,8 +32,4 @@ class Saver;
 	Saver *saver;
 };
 
-- (void)initGL;
-- (void)display;
-- (void)reshape:(NSSize)size;
-
 @end
