@@ -25,8 +25,11 @@
 
 #import <ScreenSaver/ScreenSaver.h>
 
+class Saver;
+
 @interface ElectropaintView : ScreenSaverView {
 	NSOpenGLView *glview;
+	Saver *saver;
 };
 
 - (void)initGL;
