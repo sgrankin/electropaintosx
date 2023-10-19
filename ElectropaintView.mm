@@ -308,7 +308,7 @@ public:
 - (id)initWithFrame:(NSRect)frame isPreview:(BOOL)isPreview {
 	self = [super initWithFrame:frame isPreview:isPreview];
 	if (self) {
-		[self setAnimationTimeInterval:1/60.0];
+		[self setAnimationTimeInterval:1.0/24.0];
 		
 		NSOpenGLPixelFormatAttribute attr[] = {
 			NSOpenGLPFANoRecovery,
